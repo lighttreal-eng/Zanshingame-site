@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZANSHIN — FPS Katana PVP</title>
+<meta name="description" content="Zanshin — a precision katana FPS PVP game. 1v1, 2v2, 3v3. Available on Itch.io and Epic Games Store.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Shippori+Mincho:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1611;
+    --ink-light: #3d3529;
+    --paper: #f5f0e8;
+    --paper-dark: #ede8de;
+    --red: #8b1a1a;
+    --red-light: #c0392b;
+    --gold: #b8943f;
+    --gray: #8a8070;
+    --gray-light: #c8c0b0;
+    --border: rgba(26,22,17,0.15);
+    --border-strong: rgba(26,22,17,0.35);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Shippori Mincho', serif;
+    font-size: 16px;
+    line-height: 1.8;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+
+  /* ── VERTICAL RED LINE ── */
+  body::after {
+    content: '';
+    position: fixed;
+    left: 48px;
+    top: 0;
+    width: 1px;
+    height: 100vh;
+    background: var(--red);
+    opacity: 0.18;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--paper-dark); }
+  ::-webkit-scrollbar-thumb { background: var(--ink-light); }
+
+  /* ── NAVIGATION ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
+    padding: 0 80px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(245,240,232,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .nav-logo {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.3em;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-logo::before {
+    content: '斬';
+    font-size: 24px;
+    color: var(--red);
+    opacity: 0.9;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links a:hover { color: var(--red); }
+
+  .nav-cta {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--ink);
+    border: none;
+    padding: 10px 24px;
+    cursor: crosshair;
+    transition: background 0.3s ease, transform 0.2s ease;
+    text-decoration: none;
+  }
+
+  .nav-cta:hover { 
+    background: var(--red); 
+    transform: translateY(-1px);
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 80px 80px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-kanji-bg {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 40vw;
+    font-weight: 700;
+    color: var(--ink);
+    opacity: 0.03;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.05em;
+  }
+
+  .hero-content {
+    max-width: 680px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--red);
+  }
+
+  .hero-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(72px, 10vw, 128px);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 8px;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+
+  .hero-title .kanji {
+    display: block;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 300;
+    color: var(--red);
+    letter-spacing: 0.5em;
+    margin-bottom: 8px;
+  }
+
+  .hero-subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: var(--gray);
+    margin-bottom: 48px;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .hero-tagline {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink-light);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: 56px;
+    animation: fadeUp 0.8s 0.3s ease both;
+    border-left: 2px solid var(--red);
+    padding-left: 24px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: crosshair;
+  }
+
+  .btn-primary:hover { 
+    background: var(--red); 
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    color: var(--ink);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 15px 32px;
+    border: 1px solid var(--border-strong);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: crosshair;
+  }
+
+  .btn-secondary:hover {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+    transform: translateY(-2px);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 48px;
+    left: 80px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gray);
+    animation: fadeUp 0.8s 0.6s ease both;
+  }
+
+  .hero-scroll::before {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: var(--gray);
+    animation: scrollLine 2s infinite;
+  }
+
+  @keyframes scrollLine {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); transform-origin: top; }
+    50% { opacity: 1; transform: scaleY(0.6); transform-origin: top; }
+  }
+
+  .hero-platform-badges {
+    position: absolute;
+    right: 80px;
+    bottom: 48px;
+    display: flex;
+    gap: 16px;
+    animation: fadeUp 0.8s 0.5s ease both;
+  }
+
+  .platform-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--gray);
+    border: 1px solid var(--border-strong);
+    padding: 8px 16px;
+    text-transform: uppercase;
+    transition: border-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .platform-badge:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0 80px;
+    margin: 0;
+  }
+
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-divider .kanji-mark {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 20px;
+    color: var(--red);
+    opacity: 0.6;
+  }
+
+  /* ── SECTIONS COMMON ── */
+  section {
+    padding: 120px 80px;
+    position: relative;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--red);
+  }
+
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 64px;
+  }
+
+  /* ── GAME MODES ── */
+  #modes { background: var(--paper); }
+
+  .modes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .mode-card {
+    background: var(--paper);
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .mode-card:hover { 
+    background: var(--paper-dark); 
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+    z-index: 2;
+  }
+
+  .mode-card::before {
+    content: attr(data-kanji);
+    position: absolute;
+    bottom: -16px;
+    right: 16px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 100px;
+    font-weight: 700;
+    color: var(--ink);
+    opacity: 0.04;
+    line-height: 1;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  
+  .mode-card:hover::before {
+    opacity: 0.08;
+    transform: scale(1.05);
+  }
+
+  .mode-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--red);
+    margin-bottom: 24px;
+  }
+
+  .mode-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .mode-desc {
+    font-size: 15px;
+    color: var(--gray);
+    line-height: 1.8;
+    max-width: 280px;
+  }
+
+  .mode-tag {
+    display: inline-block;
+    margin-top: 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 4px 12px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+
+  .mode-card:hover .mode-tag {
+    opacity: 1;
+  }
+
+  /* ── DOWNLOAD ── */
+  #download { background: var(--paper-dark); }
+
+  .download-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .download-card {
+    border: 1px solid var(--border-strong);
+    background: var(--paper);
+    padding: 56px 48px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: crosshair;
+  }
+
+  .download-card::after {
+    content: '→';
+    position: absolute;
+    right: 48px;
+    bottom: 56px;
+    font-size: 24px;
+    color: var(--gray-light);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .download-card:hover {
+    border-color: var(--ink);
+    background: var(--ink);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(26,22,17,0.15);
+  }
+
+  .download-card:hover .dl-platform,
+  .download-card:hover .dl-title,
+  .download-card:hover .dl-desc {
+    color: var(--paper);
+  }
+
+  .download-card:hover::after { color: var(--paper); right: 40px; }
+
+  .dl-platform {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 16px;
+    transition: color 0.3s;
+  }
+
+  .download-card:hover .dl-platform { color: var(--gold); }
+
+  .dl-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 16px;
+    transition: color 0.3s;
+  }
+
+  .dl-desc {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.7;
+    transition: color 0.3s;
+  }
+
+  .dl-icon {
+    position: absolute;
+    top: 48px;
+    right: 48px;
+    font-size: 48px;
+    opacity: 0.12;
+    transition: opacity 0.3s, transform 0.4s;
+  }
+
+  .download-card:hover .dl-icon { 
+    opacity: 0.3; 
+    transform: scale(1.1);
+  }
+
+  /* ── GALLERY ── */
+  #gallery { background: var(--paper); }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 300px 300px;
+    gap: 4px;
+  }
+
+  .gallery-item {
+    background: var(--paper-dark);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.3s ease;
+  }
+
+  .gallery-item:hover {
+    border-color: var(--red);
+  }
+
+  .gallery-item:first-child {
+    grid-row: 1 / 3;
+  }
+
+  .gallery-placeholder {
+    text-align: center;
+    transition: transform 0.4s ease;
+  }
+  
+  .gallery-item:hover .gallery-placeholder {
+    transform: scale(1.05);
+  }
+
+  .gallery-placeholder .kanji {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 48px;
+    color: var(--ink);
+    opacity: 0.1;
+    display: block;
+    margin-bottom: 8px;
+    transition: opacity 0.3s ease;
+  }
+
+  .gallery-item:hover .kanji {
+    opacity: 0.2;
+    color: var(--red);
+  }
+
+  .gallery-placeholder span {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gray-light);
+  }
+
+  .gallery-note {
+    margin-top: 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--gray);
+    text-align: center;
+    padding: 16px;
+    border: 1px dashed var(--border-strong);
+    display: inline-block;
+  }
+
+  /* ── NEWS ── */
+  #news { background: var(--paper-dark); }
+
+  .news-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .news-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 40px;
+    padding: 40px 0;
+    border-bottom: 1px solid var(--border);
+    transition: padding-left 0.3s ease, background 0.3s ease;
+    cursor: default;
+  }
+
+  .news-item:hover {
+    padding-left: 16px;
+    background: rgba(26,22,17,0.02);
+  }
+
+  .news-item:first-child { border-top: 1px solid var(--border); }
+
+  .news-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--gray);
+    padding-top: 4px;
+  }
+
+  .news-tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid var(--border-strong);
+    color: var(--gray);
+    margin-bottom: 8px;
+  }
+
+  .news-tag.dev { border-color: var(--red); color: var(--red); }
+  .news-tag.announce { border-color: var(--gold); color: var(--gold); }
+
+  .news-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .news-excerpt {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.7;
+  }
+
+  /* ── COMMUNITY ── */
+  #community { background: var(--ink); }
+
+  #community .section-label { color: var(--gold); }
+  #community .section-label::before { background: var(--gold); }
+  #community .section-title { color: var(--paper); }
+
+  .community-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .community-text p {
+    font-size: 16px;
+    color: var(--gray-light);
+    line-height: 1.9;
+    margin-bottom: 40px;
+  }
+
+  .discord-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: #5865F2;
+    color: white;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 18px 40px;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: crosshair;
+  }
+
+  .discord-btn:hover { 
+    background: #4752d1; 
+    transform: translateY(-2px);
+  }
+
+  .community-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: rgba(245,240,232,0.08);
+    border: 1px solid rgba(245,240,232,0.08);
+  }
+
+  .stat-card {
+    background: rgba(245,240,232,0.03);
+    padding: 40px 32px;
+    text-align: center;
+    transition: background 0.3s ease;
+  }
+  
+  .stat-card:hover {
+    background: rgba(245,240,232,0.06);
+  }
+
+  .stat-number {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--paper);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    border-top: 1px solid rgba(245,240,232,0.08);
+    padding: 48px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0.7;
+  }
+
+  .footer-logo::before {
+    content: '斬';
+    color: var(--red);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gray);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .footer-links a:hover { color: var(--paper); }
+
+  .footer-copy {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--gray);
+    opacity: 0.5;
+  }
+
+  /* ── MOBILE NAV TOGGLE ── */
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: crosshair;
+    flex-direction: column;
+    gap: 5px;
+    padding: 4px;
+  }
+
+  .nav-toggle span {
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--ink);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 900px) {
+    body::after { display: none; }
+
+    nav { padding: 0 24px; }
+    .nav-links, .nav-cta { display: none; }
+    .nav-toggle { display: flex; }
+
+    .nav-links.open {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: var(--paper);
+      padding: 24px;
+      gap: 20px;
+      border-bottom: 1px solid var(--border);
+      z-index: 499;
+      animation: menuSlideDown 0.3s ease forwards;
+    }
+    
+    @keyframes menuSlideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    section { padding: 80px 24px; }
+    #hero { padding: 80px 24px 0; }
+
+    .hero-title { font-size: 56px; }
+    .hero-platform-badges { display: none; }
+    .hero-scroll { left: 24px; }
+
+    .modes-grid { grid-template-columns: 1fr; }
+    .download-grid { grid-template-columns: 1fr; }
+    .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+    .gallery-item:first-child { grid-row: auto; }
+    .community-inner { grid-template-columns: 1fr; gap: 48px; }
+    .section-divider { padding: 0 24px; }
+    footer { padding: 32px 24px; flex-direction: column; gap: 24px; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="#hero" class="nav-logo">ZANSHIN</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#modes">Game Modes</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#news">Dev Log</a></li>
+    <li><a href="#community">Community</a></li>
+  </ul>
+  <a href="#download" class="nav-cta">Download</a>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<section id="hero">
+  <div class="hero-kanji-bg">斬</div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">FPS Katana PVP · 2025</div>
+    <h1 class="hero-title">
+      <span class="kanji">斬心</span>
+      ZANSHIN
+    </h1>
+    <p class="hero-subtitle">1v1 &nbsp;·&nbsp; 2v2 &nbsp;·&nbsp; 3v3 &nbsp;·&nbsp; PRECISION KATANA COMBAT</p>
+    <p class="hero-tagline">
+      The state of zanshin — lingering awareness after the strike. One blade. One moment. No second chances.
+    </p>
+    <div class="hero-actions">
+      <a href="#download" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M3 6l4 4 4-4M1 11h12" stroke="currentColor" stroke-width="1.2"/></svg>
+        Download
+      </a>
+      <a href="#modes" class="btn-secondary">Game Modes →</a>
+    </div>
+  </div>
+  <div class="hero-scroll">SCROLL</div>
+  <div class="hero-platform-badges">
+    <div class="platform-badge">Itch.io</div>
+    <div class="platform-badge">Epic Games</div>
+  </div>
+</section>
+
+<div class="section-divider"><span class="kanji-mark">一</span></div>
+
+<section id="modes">
+  <div class="section-label">Game Modes</div>
+  <h2 class="section-title">Three formats.<br>One blade.</h2>
+  <div class="modes-grid reveal">
+    <div class="mode-card" data-kanji="一">
+      <div class="mode-number">01 — DUEL</div>
+      <div class="mode-title">1 v 1</div>
+      <p class="mode-desc">The purest format. Two warriors, one space, zero mistakes. Your reflexes and reading ability dictate the outcome.</p>
+      <div class="mode-tag">Pure Dueling</div>
+    </div>
+    <div class="mode-card" data-kanji="二">
+      <div class="mode-number">02 — PAIR</div>
+      <div class="mode-title">2 v 2</div>
+      <p class="mode-desc">Coordination and swordsmanship combined. Think as a team, strike as an individual. Synchronization is your weapon.</p>
+      <div class="mode-tag">Team Play</div>
+    </div>
+    <div class="mode-card" data-kanji="三">
+      <div class="mode-number">03 — SQUAD</div>
+      <div class="mode-title">3 v 3</div>
+      <p class="mode-desc">Tactics, roles, communication. The battle scenarios are endless — with six blades, every match is a different world.</p>
+      <div class="mode-tag">Squad Combat</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"><span class="kanji-mark">二</span></div>
+
+<section id="download">
+  <div class="section-label">Download</div>
+  <h2 class="section-title">Obtain<br>the blade.</h2>
+  <div class="download-grid reveal">
+    <a href="https://itch.io" target="_blank" rel="noopener" class="download-card">
+      <div class="dl-icon">🎮</div>
+      <div class="dl-platform">Itch.io</div>
+      <div class="dl-title">Indie<br>Version</div>
+      <p class="dl-desc">Free download, direct support for the developer. Access to the latest builds and exclusive beta testing.</p>
+    </a>
+    <a href="https://store.epicgames.com" target="_blank" rel="noopener" class="download-card">
+      <div class="dl-icon">⚡</div>
+      <div class="dl-platform">Epic Games Store</div>
+      <div class="dl-title">Epic<br>Version</div>
+      <p class="dl-desc">Integrated within the Epic ecosystem, featuring seamless crossplay support and automatic updates.</p>
+    </a>
+  </div>
+</section>
+
+<div class="section-divider"><span class="kanji-mark">三</span></div>
+
+<section id="gallery">
+  <div class="section-label">Gallery</div>
+  <h2 class="section-title">In-game snapshots.</h2>
+  <div class="gallery-grid reveal">
+    <div class="gallery-item">
+      <div class="gallery-placeholder">
+        <span class="kanji">映</span>
+        <span>Screenshot — Main</span>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder">
+        <span class="kanji">剣</span>
+        <span>Combat</span>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder">
+        <span class="kanji">場</span>
+        <span>Arena</span>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder">
+        <span class="kanji">闘</span>
+        <span>1v1 Duel</span>
+      </div>
+    </div>
+    <div class="gallery-item">
+      <div class="gallery-placeholder">
+        <span class="kanji">陣</span>
+        <span>Squad</span>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top: 32px;">
+    <p class="gallery-note">⚠ Screenshots coming soon — replace placeholder blocks with real images</p>
+  </div>
+</section>
+
+<div class="section-divider"><span class="kanji-mark">四</span></div>
+
+<section id="news">
+  <div class="section-label">Dev Log</div>
+  <h2 class="section-title">Development journal.</h2>
+  <div class="news-list reveal">
+    <div class="news-item">
+      <div class="news-date">2025<br>Apr 07</div>
+      <div>
+        <div class="news-tag announce">Announcement</div>
+        <div class="news-title">Zanshin officially announced — Itch.io &amp; Epic Games</div>
+        <p class="news-excerpt">The game will be available on both platforms. 1v1, 2v2, and 3v3 modes are already fully playable in the very first build.</p>
+      </div>
+    </div>
+    <div class="news-item">
+      <div class="news-date">2025<br>Mar 20</div>
+      <div>
+        <div class="news-tag dev">Dev Log</div>
+        <div class="news-title">Hit detection &amp; ping compensation — how we do it</div>
+        <p class="news-excerpt">In katana combat, precision is everything. A detailed write-up on how we handle latency and exact hit registration in melee PVP.</p>
+      </div>
+    </div>
+    <div class="news-item">
+      <div class="news-date">2025<br>Feb 14</div>
+      <div>
+        <div class="news-tag dev">Dev Log</div>
+        <div class="news-title">Arena design — why space matters in katana combat</div>
+        <p class="news-excerpt">Arenas aren't random. Every corner and corridor is meticulously built around melee dynamics. An inside look at our level design philosophy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider" style="background: var(--ink);"><span class="kanji-mark" style="color: var(--gold);">五</span></div>
+
+<section id="community">
+  <div class="community-inner">
+    <div class="community-text">
+      <div class="section-label">Community</div>
+      <h2 class="section-title">Join the<br>clan.</h2>
+      <p>The Zanshin community lives on Discord. Find leaderboards, exclusive patch previews, 1v1 challenges, developer Q&amp;As, and weekly tourneys.</p>
+      <a href="https://discord.gg/MEGHIVOD" target="_blank" rel="noopener" class="discord-btn">
+        <svg width="20" height="16" viewBox="0 0 20 16" fill="none"><path d="M16.94 1.36A16.5 16.5 0 0013.07.01a.06.06 0 00-.07.03c-.18.32-.38.73-.52 1.05a15.24 15.24 0 00-4.96 0A11.2 11.2 0 007 .04.06.06 0 006.93.01 16.46 16.46 0 003.06 1.36a.06.06 0 00-.03.02C.44 5.53-.27 9.58.08 13.58c0 .02.01.04.03.05a16.6 16.6 0 005.06 2.62.06.06 0 00.07-.03 12.3 12.3 0 001.04-1.72.06.06 0 00-.03-.09 10.93 10.93 0 01-1.58-.77.06.06 0 010-.1l.32-.25a.06.06 0 01.06-.01c3.32 1.55 6.91 1.55 10.19 0a.06.06 0 01.06.01l.32.25a.06.06 0 010 .1 10.4 10.4 0 01-1.58.77.06.06 0 00-.04.09 13.77 13.77 0 001.04 1.72.06.06 0 00.07.03 16.53 16.53 0 005.07-2.62.06.06 0 00.03-.05c.42-4.47-.71-8.48-2.98-11.98a.05.05 0 00-.03-.03zM6.68 11.16c-1.07 0-1.95-1-1.95-2.24s.86-2.24 1.95-2.24c1.1 0 1.97 1.01 1.95 2.24 0 1.23-.86 2.24-1.95 2.24zm7.2 0c-1.07 0-1.95-1-1.95-2.24s.86-2.24 1.95-2.24c1.1 0 1.97 1.01 1.95 2.24 0 1.23-.85 2.24-1.95 2.24z" fill="currentColor"/></svg>
+        Discord Server
+      </a>
+    </div>
+    <div class="community-stats">
+      <div class="stat-card">
+        <div class="stat-number">—</div>
+        <div class="stat-label">Discord Members</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">3</div>
+        <div class="stat-label">Game Modes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">2</div>
+        <div class="stat-label">Platforms</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">Rematches</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">ZANSHIN</div>
+  <ul class="footer-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#modes">Game Modes</a></li>
+    <li><a href="#download">Download</a></li>
+    <li><a href="#news">Dev Log</a></li>
+    <li><a href="#community">Community</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 Zanshin</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Nav scroll shadow
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.style.boxShadow = window.scrollY > 10 ? '0 2px 24px rgba(26,22,17,0.08)' : 'none';
+  });
+
+  // Mobile menu
+  const toggle = document.getElementById('nav-toggle');
+  const links = document.getElementById('nav-links');
+  toggle.addEventListener('click', () => {
+    links.classList.toggle('open');
+  });
+  links.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => links.classList.remove('open'));
+  });
+</script>
+</body>
+</html>
