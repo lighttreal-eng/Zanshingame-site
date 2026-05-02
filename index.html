@@ -2202,7 +2202,9 @@
 
 <script>
   /* ══ PAGE ROUTING ══ */
-  function showPage(name) {
+  const pageUrls = { home: '/', upgrades: '/upgrades', policy: '/policy' };
+
+  function showPage(name, pushState = true) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + name).classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2211,9 +2213,32 @@
     document.getElementById('nav-upgrades').classList.toggle('active', name === 'upgrades');
     document.getElementById('nav-policy').classList.toggle('active', name === 'policy');
 
+    // Update URL
+    if (pushState) history.pushState({ page: name }, '', pageUrls[name] || '/');
+
+    // Update page title
+    const titles = { home: 'ZANSHIN — FPS Katana PVP', upgrades: 'Upgrades — ZANSHIN', policy: 'Policy — ZANSHIN' };
+    document.title = titles[name] || 'ZANSHIN';
+
     // Re-run reveals for newly visible page
     setTimeout(initReveals, 50);
   }
+
+  // Handle browser back/forward
+  window.addEventListener('popstate', (e) => {
+    const path = location.pathname;
+    if (path.startsWith('/upgrades')) showPage('upgrades', false);
+    else if (path.startsWith('/policy')) showPage('policy', false);
+    else showPage('home', false);
+  });
+
+  // On initial load — read URL and show correct page
+  (function routeOnLoad() {
+    const path = location.pathname;
+    if (path.startsWith('/upgrades')) showPage('upgrades', false);
+    else if (path.startsWith('/policy')) showPage('policy', false);
+    // else home is already shown by default
+  })();
 
   /* ══ SCROLL REVEAL ══ */
   function initReveals() {
@@ -2264,7 +2289,18 @@
     community: ['The Code of the Blade', 'Prohibited Conduct', 'Enforcement', 'Reporting']
   };
 
-  function switchPolicy(type) {
+  // Add stable IDs to every policy-section so TOC links can scroll to them
+  function stampSectionIds() {
+    document.querySelectorAll('.policy-panel').forEach(panel => {
+      const type = panel.id.replace('panel-', '');
+      panel.querySelectorAll('.policy-section').forEach((sec, i) => {
+        sec.id = `ps-${type}-${i}`;
+      });
+    });
+  }
+  stampSectionIds();
+
+  function switchPolicy(type, pushState = true) {
     // Tabs
     document.querySelectorAll('.policy-tab').forEach((t, i) => {
       const types = ['privacy', 'tos', 'eula', 'cookies', 'community'];
@@ -2275,15 +2311,35 @@
     document.querySelectorAll('.policy-panel').forEach(p => p.classList.remove('active'));
     document.getElementById('panel-' + type).classList.add('active');
 
-    // Sidebar TOC
+    // Sidebar TOC — links scroll to each section
     const sidebarLinks = document.getElementById('policy-sidebar-links');
     sidebarLinks.innerHTML = policyToc[type].map((item, i) =>
-      `<li><a href="#" onclick="return false;" class="${i===0?'active':''}">${String(i+1).padStart(2,'0')} — ${item}</a></li>`
+      `<li><a href="#ps-${type}-${i}" data-section="ps-${type}-${i}" class="toc-link ${i===0?'active':''}">${String(i+1).padStart(2,'0')} — ${item}</a></li>`
     ).join('');
+
+    // Attach click handlers for smooth scroll + active highlight
+    sidebarLinks.querySelectorAll('.toc-link').forEach(a => {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.getElementById(this.dataset.section);
+        if (target) {
+          const offset = 64 + 52 + 20; // nav + tabs bar + breathing room
+          const top = target.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+        sidebarLinks.querySelectorAll('.toc-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Update URL without reload
+    if (pushState) {
+      history.pushState({ page: 'policy', tab: type }, '', '/policy');
+    }
   }
 
   // Init sidebar
-  switchPolicy('privacy');
+  switchPolicy('privacy', false);
 
   /* ══ COOKIE BANNER ══ */
   const cookieBanner = document.getElementById('cookie-banner');
