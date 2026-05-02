@@ -255,6 +255,7 @@
     text-transform: uppercase;
     padding: 16px 32px;
     text-decoration: none;
+    border: none;
     transition: background 0.3s ease, transform 0.2s ease;
     cursor: crosshair;
   }
@@ -788,14 +789,21 @@
     color: var(--gray);
   }
 
-  /* ── FOOTER ── */
+  /* ── FOOTER REWORKED ── */
   footer {
     background: var(--ink);
     border-top: 1px solid rgba(245,240,232,0.08);
     padding: 48px 80px;
     display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .footer-top {
+    display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
   }
 
   .footer-logo {
@@ -833,6 +841,15 @@
 
   .footer-links a:hover { color: var(--paper); }
 
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(245,240,232,0.05);
+    padding-top: 24px;
+    width: 100%;
+  }
+
   .footer-copy {
     font-family: 'Space Mono', monospace;
     font-size: 10px;
@@ -840,6 +857,162 @@
     color: var(--gray);
     opacity: 0.5;
   }
+
+  .footer-legal-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-legal-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--gray);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    cursor: crosshair;
+  }
+
+  .footer-legal-links a:hover { color: var(--paper); }
+
+  /* ── MODAL (POLICIES) ── */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26,22,17,0.8);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+
+  .modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .modal-container {
+    background: var(--paper);
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    border: 1px solid var(--border-strong);
+    padding: 48px;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-overlay.active .modal-container {
+    transform: translateY(0);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    color: var(--ink);
+    cursor: crosshair;
+    transition: color 0.3s ease;
+  }
+
+  .modal-close:hover { color: var(--red); }
+
+  .modal-content {
+    overflow-y: auto;
+    padding-right: 16px;
+  }
+  
+  .modal-content::-webkit-scrollbar { width: 4px; }
+  .modal-content::-webkit-scrollbar-track { background: var(--paper-dark); }
+  .modal-content::-webkit-scrollbar-thumb { background: var(--ink-light); }
+
+  .policy-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 32px;
+    color: var(--ink);
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+
+  .policy-text h3 {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin: 32px 0 12px 0;
+  }
+
+  .policy-text p {
+    font-size: 14px;
+    color: var(--ink-light);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  /* ── COOKIE BANNER ── */
+  .cookie-banner {
+    position: fixed;
+    bottom: -100px;
+    left: 0;
+    right: 0;
+    background: var(--ink);
+    padding: 24px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 900;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.2);
+    transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .cookie-banner.visible {
+    bottom: 0;
+  }
+
+  .cookie-text {
+    font-size: 13px;
+    color: var(--gray-light);
+    max-width: 600px;
+  }
+
+  .cookie-text a {
+    color: var(--paper);
+    text-decoration: underline;
+    text-decoration-color: var(--red);
+    cursor: crosshair;
+  }
+
+  .cookie-actions {
+    display: flex;
+    gap: 16px;
+  }
+
+  .cookie-banner .btn-primary,
+  .cookie-banner .btn-secondary {
+    padding: 10px 24px;
+    font-size: 10px;
+  }
+
+  .cookie-banner .btn-primary { background: var(--paper); color: var(--ink); }
+  .cookie-banner .btn-primary:hover { background: var(--red); color: var(--paper); }
+  .cookie-banner .btn-secondary { color: var(--paper); border-color: rgba(245,240,232,0.2); }
+  .cookie-banner .btn-secondary:hover { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+
 
   /* ── MOBILE NAV TOGGLE ── */
   .nav-toggle {
@@ -918,8 +1091,15 @@
     .gallery-item:first-child { grid-row: auto; }
     .community-inner { grid-template-columns: 1fr; gap: 48px; }
     .section-divider { padding: 0 24px; }
-    footer { padding: 32px 24px; flex-direction: column; gap: 24px; text-align: center; }
+    
+    footer { padding: 32px 24px; }
+    .footer-top { flex-direction: column; gap: 24px; text-align: center; }
     .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+    .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+    .footer-legal-links { flex-wrap: wrap; justify-content: center; }
+
+    .cookie-banner { flex-direction: column; padding: 24px; gap: 16px; text-align: center; }
+    .modal-container { padding: 24px; }
   }
 </style>
 </head>
@@ -942,7 +1122,7 @@
 <section id="hero">
   <div class="hero-kanji-bg">斬</div>
   <div class="hero-content">
-    <div class="hero-eyebrow">FPS Katana PVP · 2026</div>
+    <div class="hero-eyebrow">FPS Katana PVP · 2025</div>
     <h1 class="hero-title">
       <span class="kanji">斬心</span>
       ZANSHIN
@@ -1124,16 +1304,43 @@
 </section>
 
 <footer>
-  <div class="footer-logo">ZANSHIN</div>
-  <ul class="footer-links">
-    <li><a href="#hero">Home</a></li>
-    <li><a href="#modes">Game Modes</a></li>
-    <li><a href="#download">Download</a></li>
-    <li><a href="#news">Dev Log</a></li>
-    <li><a href="#community">Community</a></li>
-  </ul>
-  <div class="footer-copy">© 2025 Zanshin</div>
+  <div class="footer-top">
+    <div class="footer-logo">ZANSHIN</div>
+    <ul class="footer-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#modes">Game Modes</a></li>
+      <li><a href="#download">Download</a></li>
+      <li><a href="#news">Dev Log</a></li>
+      <li><a href="#community">Community</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Zanshin</div>
+    <div class="footer-legal-links">
+      <a onclick="openModal('privacy')">Privacy Policy</a>
+      <a onclick="openModal('tos')">Terms of Service</a>
+      <a onclick="openModal('eula')">EULA</a>
+    </div>
+  </div>
 </footer>
+
+<div id="policy-modal" class="modal-overlay">
+  <div class="modal-container">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content" class="modal-content policy-text">
+      </div>
+  </div>
+</div>
+
+<div id="cookie-banner" class="cookie-banner">
+  <p class="cookie-text">
+    We use cookies to analyze traffic and improve your experience. No tracking of your katana swings. Read our <a onclick="openModal('privacy')">Privacy Policy</a>.
+  </p>
+  <div class="cookie-actions">
+    <button class="btn-secondary" onclick="handleCookie(false)">Decline</button>
+    <button class="btn-primary" onclick="handleCookie(true)">Accept</button>
+  </div>
+</div>
 
 <script>
   // Scroll reveal
@@ -1163,6 +1370,78 @@
   links.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', () => links.classList.remove('open'));
   });
+
+  /* ── LEGAL MODAL LOGIC ── */
+  const policies = {
+    privacy: `
+      <h2 class="policy-title">Privacy Policy</h2>
+      <p>Last updated: April 2025</p>
+      <h3>1. Information We Collect</h3>
+      <p>We collect minimal information necessary to run the game servers and improve the Zanshin experience. This includes basic gameplay telemetry, crash reports, and account identifiers provided by the Epic Games Store or Itch.io platforms.</p>
+      <h3>2. How We Use Information</h3>
+      <p>Your data is used strictly for server matchmaking, leaderboard updates, and identifying bugs within the combat engine. We do not sell your personal data to third-party advertisers.</p>
+      <h3>3. Cookies</h3>
+      <p>Our website uses basic analytics cookies to understand site traffic. You can opt out at any time using the banner provided.</p>
+    `,
+    tos: `
+      <h2 class="policy-title">Terms of Service</h2>
+      <p>Last updated: April 2025</p>
+      <h3>1. Acceptance of Terms</h3>
+      <p>By accessing zanshin-game.com or playing Zanshin, you agree to be bound by these Terms. If you do not agree, please sheathe your blade and uninstall.</p>
+      <h3>2. Acceptable Use</h3>
+      <p>Players are expected to maintain honor in combat. Exploiting bugs, using third-party aimbots, or engaging in severe toxicity within the community discord will result in a permanent ban.</p>
+      <h3>3. Intellectual Property</h3>
+      <p>All assets, including models, code, and music, are the intellectual property of the Zanshin dev team.</p>
+    `,
+    eula: `
+      <h2 class="policy-title">End User License Agreement (EULA)</h2>
+      <p>Last updated: April 2025</p>
+      <h3>1. Grant of License</h3>
+      <p>We grant you a non-exclusive, non-transferable license to play Zanshin on your personal computer. The blade is yours to wield, but the forge belongs to us.</p>
+      <h3>2. Restrictions</h3>
+      <p>You may not reverse-engineer, decompile, or distribute modified versions of the client without explicit permission. Modding is permitted only in designated offline modes if explicitly supported.</p>
+      <h3>3. Termination</h3>
+      <p>This license is effective until terminated. Your rights under this EULA will terminate automatically without notice if you fail to comply with any of its terms.</p>
+    `
+  };
+
+  const modalOverlay = document.getElementById('policy-modal');
+  const modalContent = document.getElementById('modal-content');
+
+  function openModal(type) {
+    modalContent.innerHTML = policies[type];
+    modalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling under modal
+  }
+
+  function closeModal() {
+    modalOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // Close modal on outside click
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+
+  /* ── COOKIE BANNER LOGIC ── */
+  const cookieBanner = document.getElementById('cookie-banner');
+  
+  function checkCookie() {
+    if (!localStorage.getItem('zanshin_cookie_consent')) {
+      setTimeout(() => {
+        cookieBanner.classList.add('visible');
+      }, 1500); // Show after 1.5 seconds
+    }
+  }
+
+  function handleCookie(accepted) {
+    localStorage.setItem('zanshin_cookie_consent', accepted ? 'true' : 'false');
+    cookieBanner.classList.remove('visible');
+  }
+
+  window.addEventListener('DOMContentLoaded', checkCookie);
+
 </script>
 </body>
 </html>
