@@ -1458,7 +1458,7 @@
     <li><a href="#news" onclick="showPage('home')">Dev Log</a></li>
     <li><a href="#community" onclick="showPage('home')">Community</a></li>
     <li><a href="#" onclick="showPage('upgrades'); return false;" id="nav-upgrades">Upgrades</a></li>
-    <li><a href="#" onclick="showPage('policy'); return false;" id="nav-policy">Policy</a></li>
+    <li><a href="/policy.html" id="nav-policy">Policy</a></li>
   </ul>
   <a href="#download" class="nav-cta" onclick="showPage('home')">Download</a>
   <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
@@ -1895,288 +1895,12 @@
 </div><!-- /page-upgrades -->
 
 
-<!-- ══════════════════════════════════════════
-     POLICY PAGE
-══════════════════════════════════════════ -->
-<div id="page-policy" class="page">
-
-  <!-- Hero -->
-  <div class="policy-hero">
-    <div class="policy-hero-kanji">律</div>
-    <div class="section-label">Legal &amp; Policies</div>
-    <h1 class="policy-hero-title">
-      <span class="kanji">規律</span>
-      CODE OF<br>CONDUCT.
-    </h1>
-    <p class="policy-hero-sub">
-      Last updated: April 2025 &nbsp;·&nbsp; All documents apply to zanshin-game.com and associated game clients
-    </p>
-  </div>
-
-  <!-- Tabs -->
-  <div class="policy-tabs-bar">
-    <button class="policy-tab active" onclick="switchPolicy('privacy')">Privacy Policy</button>
-    <button class="policy-tab" onclick="switchPolicy('tos')">Terms of Service</button>
-    <button class="policy-tab" onclick="switchPolicy('eula')">EULA</button>
-    <button class="policy-tab" onclick="switchPolicy('cookies')">Cookie Policy</button>
-    <button class="policy-tab" onclick="switchPolicy('community')">Community Rules</button>
-  </div>
-
-  <!-- Body: Sidebar + Content -->
-  <div class="policy-body">
-    <div class="policy-sidebar">
-      <div class="policy-sidebar-title">Contents</div>
-      <ul class="policy-sidebar-links" id="policy-sidebar-links">
-        <!-- Populated by JS -->
-      </ul>
-    </div>
-
-    <div class="policy-content-area">
-
-      <!-- Privacy -->
-      <div class="policy-panel active" id="panel-privacy">
-        <div class="policy-doc-title">Privacy Policy</div>
-        <div class="policy-doc-meta">Last updated: April 2025 &nbsp;·&nbsp; Effective immediately</div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">01</div>
-          <div class="policy-section-title">Information We Collect</div>
-          <p>We collect the minimum information necessary to operate game servers and improve the Zanshin experience. This includes:</p>
-          <ul>
-            <li>Basic gameplay telemetry (match results, mode played, session duration)</li>
-            <li>Crash reports and diagnostic data to identify engine bugs</li>
-            <li>Account identifiers provided by Epic Games Store or Itch.io platforms</li>
-            <li>IP address for matchmaking region detection (not stored long-term)</li>
-          </ul>
-          <div class="highlight-box">We do not collect: real names, payment details, physical addresses, or any biometric data. Platform purchases are handled entirely by Epic Games or Itch.io under their own privacy frameworks.</div>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">02</div>
-          <div class="policy-section-title">How We Use Your Information</div>
-          <p>Your data is used strictly for the following purposes:</p>
-          <ul>
-            <li>Server matchmaking and region balancing</li>
-            <li>Leaderboard calculation and ranking</li>
-            <li>Identifying and resolving bugs in the combat engine</li>
-            <li>Aggregate analytics to improve game balance</li>
-          </ul>
-          <p>We do not sell, rent, or share your personal data with third-party advertisers under any circumstances.</p>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">03</div>
-          <div class="policy-section-title">Data Retention</div>
-          <p>Gameplay telemetry is retained for a maximum of 12 months, after which it is anonymised or deleted. If you close your account, all personally identifiable data is removed within 30 days. Crash reports are retained for 90 days for debugging purposes.</p>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">04</div>
-          <div class="policy-section-title">Your Rights</div>
-          <p>Depending on your region you may have the right to access, correct, or request deletion of your personal data. Submit requests to the contact address below. We aim to respond within 30 days.</p>
-          <div class="highlight-box">To exercise your data rights, contact us via the Zanshin Discord server (#support channel) or through your platform's reporting system.</div>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">05</div>
-          <div class="policy-section-title">Cookies &amp; Website Tracking</div>
-          <p>Our website uses basic analytics cookies to understand site traffic. No cross-site tracking or advertising cookies are used. See our Cookie Policy for full details. You may opt out at any time through the banner provided on first visit.</p>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">06</div>
-          <div class="policy-section-title">Data Protection Contact</div>
-          <p>For all data protection inquiries, access requests, deletion requests, or complaints regarding the handling of your personal data, please contact us through any of the following channels:</p>
-          <ul>
-            <li><strong>Email:</strong> zanshinsupport@gmail.com</li>
-            <li><strong>Discord:</strong> discord.gg/sn5sKkVk5m — use the <strong>#support</strong> channel and tag your message with [DATA REQUEST]</li>
-          </ul>
-          <div class="highlight-box">We aim to acknowledge all data protection requests within <strong>72 hours</strong> and resolve them within <strong>30 days</strong> in accordance with applicable privacy regulations including GDPR (EU) and CCPA (California). If you are located in the European Economic Area and believe your rights have not been adequately addressed, you have the right to lodge a complaint with your local supervisory authority.</div>
-          <p>This game is developed and operated by the Zanshin development team. As we do not process large volumes of personal data, we have not appointed a formal Data Protection Officer (DPO); however, the contact above is monitored and all requests are handled with full compliance intent.</p>
-        </div>
-      </div>
-
-      <!-- TOS -->
-      <div class="policy-panel" id="panel-tos">
-        <div class="policy-doc-title">Terms of Service</div>
-        <div class="policy-doc-meta">Last updated: April 2025 &nbsp;·&nbsp; By playing Zanshin you accept these terms</div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">01</div>
-          <div class="policy-section-title">Acceptance of Terms</div>
-          <p>By accessing zanshin-game.com or launching the Zanshin client, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, please uninstall the client and discontinue use of the website.</p>
-          <div class="highlight-box">These terms apply to all players regardless of region, platform, or account type.</div>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">02</div>
-          <div class="policy-section-title">Acceptable Use</div>
-          <p>Players are expected to maintain honour in combat and respect within the community. The following are expressly prohibited:</p>
-          <ul>
-            <li>Exploiting bugs or glitches to gain unfair advantage in ranked play</li>
-            <li>Using third-party software (aimbots, macros, injection tools) of any kind</li>
-            <li>Engaging in targeted harassment, hate speech, or threats within Discord or in-game</li>
-            <li>Impersonating developers, moderators, or other players</li>
-            <li>Attempting to sell, transfer, or rent your game account</li>
-          </ul>
-          <p>Violations may result in temporary suspension or permanent ban at the discretion of the moderation team.</p>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">03</div>
-          <div class="policy-section-title">Intellectual Property</div>
-          <p>All game assets including 3D models, animations, audio, UI design, code architecture, and branding are the intellectual property of the Zanshin development team. Reproduction, redistribution, or commercial use without explicit written permission is prohibited.</p>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">04</div>
-          <div class="policy-section-title">Service Availability</div>
-          <p>We aim to maintain server uptime but do not guarantee uninterrupted service. Maintenance windows will be announced in advance via Discord whenever possible. We are not liable for losses resulting from downtime or server instability.</p>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">05</div>
-          <div class="policy-section-title">Changes to Terms</div>
-          <p>We reserve the right to modify these terms at any time. Material changes will be announced in our Discord server and reflected in the "Last updated" date above. Continued use of the game after a change constitutes acceptance of the new terms.</p>
-        </div>
-      </div>
-
-      <!-- EULA -->
-      <div class="policy-panel" id="panel-eula">
-        <div class="policy-doc-title">End User License Agreement</div>
-        <div class="policy-doc-meta">Last updated: April 2025 &nbsp;·&nbsp; Governs your right to play the Zanshin client</div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">01</div>
-          <div class="policy-section-title">Grant of License</div>
-          <p>Subject to your compliance with this EULA, we grant you a limited, non-exclusive, non-transferable, revocable license to install and play Zanshin on personal computing devices that you own or control. The blade is yours to wield — the forge belongs to us.</p>
-          <div class="highlight-box">This license does not include the right to resell, sublicense, or commercially exploit the game or any of its assets.</div>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">02</div>
-          <div class="policy-section-title">Restrictions</div>
-          <p>You may not, and may not permit others to:</p>
-          <ul>
-            <li>Reverse-engineer, decompile, or disassemble any part of the client</li>
-            <li>Create, distribute, or use modified versions of the game client</li>
-            <li>Extract game assets for redistribution or commercial use</li>
-            <li>Access or modify server-side code, databases, or APIs</li>
-            <li>Circumvent any copy protection or DRM systems</li>
-          </ul>
-          <p>Offline modding may be permitted in designated modes in future updates with explicit developer approval.</p>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">03</div>
-          <div class="policy-section-title">Ownership</div>
-          <p>Zanshin and all copies thereof are licensed, not sold. All title and intellectual property rights in and to the game remain with the Zanshin development team. You acquire no ownership interest through this license.</p>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">04</div>
-          <div class="policy-section-title">Termination</div>
-          <p>This license is effective until terminated. Your rights under this EULA will terminate automatically and without notice if you fail to comply with any of its terms. Upon termination, you must destroy all copies of the game in your possession.</p>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">05</div>
-          <div class="policy-section-title">Disclaimer of Warranty</div>
-          <p>Zanshin is provided "as is" without warranty of any kind, express or implied. We do not warrant that the game will be error-free or that defects will be corrected. Your use of the game is at your sole risk.</p>
-        </div>
-      </div>
-
-      <!-- Cookies -->
-      <div class="policy-panel" id="panel-cookies">
-        <div class="policy-doc-title">Cookie Policy</div>
-        <div class="policy-doc-meta">Last updated: April 2025 &nbsp;·&nbsp; Applies to zanshin-game.com only</div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">01</div>
-          <div class="policy-section-title">What Are Cookies</div>
-          <p>Cookies are small text files stored on your device when you visit a website. They allow us to remember your preferences and understand how our site is used. No katana swings are tracked. No movements are profiled.</p>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">02</div>
-          <div class="policy-section-title">Cookies We Use</div>
-          <ul>
-            <li><strong>Essential cookies</strong> — Required for the site to function (e.g. cookie consent preference storage). Cannot be disabled.</li>
-            <li><strong>Analytics cookies</strong> — Aggregate, anonymised data on page views and navigation patterns. No personal identifiers are attached.</li>
-          </ul>
-          <div class="highlight-box gold">We do not use advertising cookies, cross-site tracking cookies, social media tracking pixels, or any third-party profiling tools.</div>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">03</div>
-          <div class="policy-section-title">Your Choices</div>
-          <p>You can accept or decline analytics cookies using the banner shown on your first visit. You can also clear cookies at any time through your browser settings. Declining analytics cookies will not affect your ability to use the site or play the game.</p>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">04</div>
-          <div class="policy-section-title">Retention</div>
-          <p>Cookie consent preferences are stored locally for 12 months. Analytics data is retained in aggregate form for up to 24 months, after which it is deleted.</p>
-        </div>
-      </div>
-
-      <!-- Community Rules -->
-      <div class="policy-panel" id="panel-community">
-        <div class="policy-doc-title">Community Rules</div>
-        <div class="policy-doc-meta">Last updated: April 2025 &nbsp;·&nbsp; Applies to Discord, in-game chat, and all official Zanshin spaces</div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">01</div>
-          <div class="policy-section-title">The Code of the Blade</div>
-          <p>Zanshin is built on the values of precision, respect, and discipline — both in combat and in community. Every member of this clan is expected to uphold these principles.</p>
-          <div class="highlight-box">Treat every opponent as a worthy adversary. The greatest dishonour is not losing a duel — it is behaving without dignity.</div>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">02</div>
-          <div class="policy-section-title">Prohibited Conduct</div>
-          <ul>
-            <li>Harassment, personal attacks, or sustained targeted behaviour toward any player</li>
-            <li>Hate speech based on race, gender, religion, nationality, sexual orientation, or disability</li>
-            <li>Sharing personal information of other players without consent (doxxing)</li>
-            <li>Intentional game-ruining: AFK, throwing, or deliberate sabotage of teammates</li>
-            <li>Exploiting game bugs without reporting them to the dev team</li>
-            <li>Impersonating developers, admins, or other community members</li>
-            <li>Spam, excessive self-promotion, or unsolicited advertising</li>
-          </ul>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">03</div>
-          <div class="policy-section-title">Enforcement</div>
-          <p>Violations are handled by the moderation team with the following framework:</p>
-          <ul>
-            <li><strong>Minor breach</strong> — Verbal warning in channel</li>
-            <li><strong>Repeated minor / moderate breach</strong> — Temporary mute or 7-day suspension</li>
-            <li><strong>Severe breach</strong> — Permanent ban from Discord and game servers</li>
-          </ul>
-          <p>All ban decisions are final unless appealed within 14 days through the #appeals channel in Discord.</p>
-        </div>
-
-        <div class="policy-section">
-          <div class="policy-section-num">04</div>
-          <div class="policy-section-title">Reporting</div>
-          <p>To report a violation, use the in-game report system or post in the #reports channel on Discord with evidence. Reports are reviewed within 48 hours. False reports submitted in bad faith may result in action against the reporting party.</p>
-        </div>
-      </div>
-
-    </div><!-- /policy-content-area -->
-  </div><!-- /policy-body -->
-
-</div><!-- /page-policy -->
-
-
 <!-- ══ SHARED FOOTER ══ -->
 <footer>
   <div class="footer-top">
     <div class="footer-logo">ZANSHIN</div>
     <ul class="footer-links">
-      <li><a href="#" onclick="showPage('home')">Home</a></li>
+      <li><a href="/" onclick="showPage('home')">Home</a></li>
       <li><a href="#modes" onclick="showPage('home')">Game Modes</a></li>
       <li><a href="#download" onclick="showPage('home')">Download</a></li>
       <li><a href="#news" onclick="showPage('home')">Dev Log</a></li>
@@ -2187,10 +1911,10 @@
   <div class="footer-bottom">
     <div class="footer-copy">© 2025 Zanshin</div>
     <div class="footer-legal-links">
-      <a href="#" onclick="showPage('policy'); switchPolicy('privacy'); return false;">Privacy Policy</a>
-      <a href="#" onclick="showPage('policy'); switchPolicy('tos'); return false;">Terms of Service</a>
-      <a href="#" onclick="showPage('policy'); switchPolicy('eula'); return false;">EULA</a>
-      <a href="#" onclick="showPage('policy'); switchPolicy('cookies'); return false;">Cookies</a>
+      <a href="/policy.html">Privacy Policy</a>
+      <a href="/policy.html#tos">Terms of Service</a>
+      <a href="/policy.html#eula">EULA</a>
+      <a href="/policy.html#cookies">Cookies</a>
     </div>
   </div>
 </footer>
@@ -2198,7 +1922,7 @@
 <!-- Cookie Banner -->
 <div id="cookie-banner" class="cookie-banner">
   <p class="cookie-text">
-    We use analytics cookies to understand site traffic. No tracking of your katana swings. Read our <a href="#" onclick="showPage('policy'); switchPolicy('cookies'); return false;">Cookie Policy</a>.
+    We use analytics cookies to understand site traffic. No tracking of your katana swings. Read our <a href="/policy.html#cookies">Cookie Policy</a>.
   </p>
   <div class="cookie-actions">
     <button class="btn-secondary" onclick="handleCookie(false)">Decline</button>
